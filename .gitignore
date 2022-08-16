@@ -8,6 +8,16 @@ pizza-client/dist
 PizzaApp/bin
 PizzaApp/obj
 PizzaApp/appsettings.json
+
+Domain/bin
+Domain/obj
+
+Infrastructure/bin
+Infrastructure/obj
+
+PizzaApp.UnitTests/bin
+PizzaApp.UnitTests/obj
+
 *.log
 *.sql
 *.sqlite
