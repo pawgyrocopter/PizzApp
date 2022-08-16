@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{9D1EC407-8472-44C4-8C2D-47E686A7D37B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PizzaApp.UnitTests", "PizzaApp.UnitTests\PizzaApp.UnitTests.csproj", "{12A3E81E-D842-438C-BEF1-B4B668A9B641}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{9D1EC407-8472-44C4-8C2D-47E686A7D37B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9D1EC407-8472-44C4-8C2D-47E686A7D37B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9D1EC407-8472-44C4-8C2D-47E686A7D37B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12A3E81E-D842-438C-BEF1-B4B668A9B641}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12A3E81E-D842-438C-BEF1-B4B668A9B641}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12A3E81E-D842-438C-BEF1-B4B668A9B641}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12A3E81E-D842-438C-BEF1-B4B668A9B641}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
