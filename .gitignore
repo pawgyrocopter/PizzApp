@@ -11,6 +11,9 @@ Infrastructure/bin
 Domain/obj
 Domain/bin
 
+PizzaApp.Tests/obj
+PizzaApp.Tests/bins
+
 PizzaApp/bin
 PizzaApp/obj
 PizzaApp/appsettings.json
