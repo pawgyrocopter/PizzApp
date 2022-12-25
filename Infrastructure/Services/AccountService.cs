@@ -1,9 +1,11 @@
-﻿using Domain.DTOs;
+﻿using System.Data;
+using Domain.DTOs;
 using Domain.Entities;
 using Domain.Interfaces.IServices;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace Infrastructure.Services;
 
@@ -13,6 +15,7 @@ public class AccountService : IAccountService
     private readonly SignInManager<User> _signInManager;
     private readonly ITokenService _tokenService;
     private readonly DataContext _context;
+    private const string Connection = "Host=localhost;Database=app;Username=postgres;Password=452828qwe";
 
     public AccountService(UserManager<User> userManager, SignInManager<User> signInManager,
         ITokenService tokenService, DataContext context)
@@ -25,6 +28,8 @@ public class AccountService : IAccountService
 
     public async Task<UserDto> Register(RegisterDto registerDto)
     {
+        using IDbConnection db = new NpgsqlConnection(Connection);
+        
         if (await UserExists(registerDto.Email)) throw new UnauthorizedAccessException("Email is already in use");
 
         var user = new User()
@@ -39,7 +44,7 @@ public class AccountService : IAccountService
 
         var result = await _userManager.CreateAsync(user, registerDto.Password);
         if (!result.Succeeded) throw new ApplicationException(result.Errors.ToString());
-
+        
         var roleResult = await _userManager.AddToRoleAsync(user, "Customer");
         if (!roleResult.Succeeded) throw new ApplicationException(result.Errors.ToString());
 
@@ -63,7 +68,7 @@ public class AccountService : IAccountService
 
         var result = await _signInManager
             .CheckPasswordSignInAsync(user, loginDto.Password, false);
-
+        
         if (!result.Succeeded) throw new UnauthorizedAccessException();
 
         return new UserDto()

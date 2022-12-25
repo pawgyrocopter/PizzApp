@@ -165,6 +165,10 @@ public class PizzaRepository : IPizzaRepository
 
     public async Task<IQueryable<PizzaOrder>> GetPizzasByOrderId(int orderId)
     {
+        return _context.PizzaOrders.FromSqlInterpolated($"""
+        select * from "PizzaOrders" as pizzas
+        where pizzas."OrderId" = {orderId}
+        """);
         return _context.PizzaOrders.Where(x => x.OrderId == orderId);
     }
 }
