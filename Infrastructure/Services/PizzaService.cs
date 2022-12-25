@@ -1,10 +1,14 @@
-﻿using AutoMapper;
+﻿using System.Data;
+using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Dapper;
 using Domain.DTOs;
 using Domain.Entities;
 using Domain.Interfaces.IRepository;
 using Domain.Interfaces.IServices;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace Infrastructure.Services;
 
@@ -13,6 +17,7 @@ public class PizzaService : IPizzaService
     private readonly IMapper _mapper;
     private readonly IPhotoService _photoService;
     private readonly IUnitOfWork _unitOfWork;
+    private const string Connection = "Host=localhost;Database=app;Username=postgres;Password=452828qwe";
 
     public PizzaService(IUnitOfWork unitOfWork, IMapper mapper, IPhotoService photoService)
     {
@@ -78,8 +83,13 @@ public class PizzaService : IPizzaService
 
     public async Task<PizzaDto> UpdatePizzaOrderState(int pizzaId, int state)
     {
-        var pizza = await _unitOfWork.PizzaRepository.GetPizzaOrderById(pizzaId);
-        var order = await _unitOfWork.OrderRepository.GetOrderByPizzaId(pizza.Id);
+        using IDbConnection db = new NpgsqlConnection(Connection);
+        //var pizza = await _unitOfWork.PizzaRepository.GetPizzaOrderById(pizzaId);
+        var pizza = db.Query<PizzaOrder>(""" 
+        select * from "PizzaOrders" pizzas
+        where pizzas."Id" = @id
+        """
+        , new {id = pizzaId}).First();
         if (pizza == null) return null;
         pizza.State = state switch
         {
@@ -88,13 +98,36 @@ public class PizzaService : IPizzaService
             2 => State.Ready,
             _ => State.Canceled
         };
-        bool check = pizza.Order.Pizzas.All(x => x.State == State.Ready);
-        if (check)
+        
+        db.Query(""" 
+        update "PizzaOrders"
+        set "State" = @state
+        where "Id" = @id
+        """
+        , new {state = pizza.State, id = pizza.Id});
+        
+        
+        var order = await _unitOfWork.OrderRepository.GetOrderByPizzaId(pizzaId);
+
+        if (order.Pizzas.All(x => x.State == State.Ready))
         {
-            pizza.Order.OrderState = OrderState.Ready;
+            order.OrderState = OrderState.Ready;
         }
+        
+        db.Query(""" 
+        update "Orders"
+        set "OrderState" = @state
+        where "Id" = @id
+        """
+            , new {state = order.OrderState, id = order.Id});
+        // bool check = pizza.Order.Pizzas.All(x => x.State == State.Ready);
+        // if (check)
+        // {
+        //     pizza.Order.OrderState = OrderState.Ready;
+        // }
 
         _unitOfWork.Complete();
+        
         return _mapper.Map<PizzaDto>(pizza);
     }
 

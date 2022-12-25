@@ -66,8 +66,8 @@ public class OrderService : IOrderService
 
     public async Task<IEnumerable<OrderDto>> GetUserOrdersAsync(string name)
     {
-        return (await _unitOfWork.OrderRepository.GerUserOrders(name))
-            .ProjectTo<OrderDto>(_mapper.ConfigurationProvider);
+        var orders = (await _unitOfWork.OrderRepository.GerUserOrders(name));
+        return _mapper.Map<List<OrderDto>>(orders);
     }
 
     public async Task<OrderDto> GerOrderById(int orderId)

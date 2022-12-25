@@ -133,6 +133,44 @@ public class OrderRepository : IOrderRepository
 
     public async Task<IQueryable<Order>> GerUserOrders(string name)
     {
+        using IDbConnection db = new NpgsqlConnection(Connection);
+        var ordersDict = new Dictionary<int, Order>();
+        db.Query<Order, User, PizzaOrder, Pizza,Photo, Order>(""" 
+            select * from "Orders" as orders
+            join (select * from "AspNetUsers") as u on u."Id" = orders."UserId"
+            join (select * from "PizzaOrders") as po on po."OrderId" = orders."Id"
+            join (select * from "Pizzas") as pi on pi."Id" = po."PizzaId"
+            join (select * from "Photos") as ph on ph."Id" = pi."PhotoId"
+            where u."UserName" = @name
+        """
+            , (order, user,pizzaOrder, pizza, photo) =>
+            {
+                if (!ordersDict.TryGetValue(order.Id, out var orderEntity))
+                {
+                    ordersDict.Add(order.Id, orderEntity = order);
+                }
+                orderEntity.User = user;
+                
+                if(orderEntity.Pizzas == null || orderEntity.Pizzas.Count == 0)
+                {
+                    orderEntity.Pizzas = new List<PizzaOrder>();
+                }
+                
+                if (pizzaOrder != null)
+                {
+                    if (!orderEntity.Pizzas.Any(x => x.Id == pizzaOrder.Id))
+                    {
+                        pizzaOrder.Pizza = new Pizza();
+                        if (pizza != null) pizzaOrder.Pizza = pizza;
+                        pizzaOrder.Pizza.Photo = photo;
+                        orderEntity.Pizzas.Add(pizzaOrder);
+                    }
+                }
+                
+                return orderEntity;
+            }, new {name = name});
+        var orders1 = ordersDict.Select(x => x.Value).AsQueryable();
+        return orders1;
         return _context.Orders
             .Include(x => x.User)
             .Include(x => x.Pizzas)
@@ -255,6 +293,39 @@ public class OrderRepository : IOrderRepository
 
     public async Task<Order> GetOrderByPizzaId(int pizzaOrderId)
     {
+        using IDbConnection db = new NpgsqlConnection(Connection);
+        var ordersDict = new Dictionary<int, Order>();
+        db.Query<Order,PizzaOrder, Order>(""" 
+            select * from "Orders" as orders 
+            join (select * from "PizzaOrders") as po on po."OrderId" = orders."Id" 
+            where po."Id" = @id
+        """
+            , (order,pizzaOrder) =>
+            {
+                if (!ordersDict.TryGetValue(order.Id, out var orderEntity))
+                {
+                    ordersDict.Add(order.Id, orderEntity = order);
+                }
+
+                if(orderEntity.Pizzas == null || orderEntity.Pizzas.Count == 0)
+                {
+                    orderEntity.Pizzas = new List<PizzaOrder>();
+                }
+                
+                if (pizzaOrder != null)
+                {
+                    if (!orderEntity.Pizzas.Any(x => x.Id == pizzaOrder.Id))
+                    {
+                        orderEntity.Pizzas.Add(pizzaOrder);
+                    }
+                }
+                
+                return orderEntity;
+            }, new {id = pizzaOrderId});
+        var orders1 = ordersDict.Select(x => x.Value).First();
+        return orders1;
+        
+        
         return await _context.Orders
             .Include(p => p.Pizzas)
             .FirstOrDefaultAsync(x => x.Id == pizzaOrderId);

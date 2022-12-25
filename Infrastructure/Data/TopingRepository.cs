@@ -18,18 +18,22 @@ public class TopingRepository : ITopingRepository
 
     public async Task<IQueryable<Toping>> GetTopings()
     {
-        return _context.Topings.AsQueryable();
+        return _context.Topings.FromSqlRaw(""" select * from "Topings" """);
     }
 
     public async Task<Toping> CreateToping(string name)
     {
         var toping = new Toping() {Name = name};
-        await _context.Topings.AddAsync(toping);
+        await _context.Database.ExecuteSqlInterpolatedAsync($"""
+         insert into "Topings"
+         values (DEFAULT, {name})
+         """ );
+       // await _context.Topings.AddAsync(toping);
         return toping;
     }
 
     public async Task<Toping> GetTopingById(int topingId)
     {
-        return await _context.Topings.FirstOrDefaultAsync(x => x.Id == topingId);
+        return _context.Topings.FromSqlInterpolated($""" select * from "Topings" as top where top."Id" = {topingId}  """).First();
     }
 }
