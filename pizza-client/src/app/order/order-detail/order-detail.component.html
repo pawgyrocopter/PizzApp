@@ -21,7 +21,7 @@
           </li>
         </ul>
       </th>
-      <th>{{pizza.cost}}</th>
+      <th>{{pizza.maxCost}}</th>
       <th>{{pizza.stateAsString}}</th>
       <th *ngIf="(accountService.currentUser$ | async)?.roles.includes('PizzaMaker')">
         <form [formGroup]="selectState">

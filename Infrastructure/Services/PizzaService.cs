@@ -65,10 +65,11 @@ public class PizzaService : IPizzaService
 
     public async Task<PizzaDto> UpdatePizza(PizzaDto pizzaDto)
     {
-        var pizza = await _unitOfWork.PizzaRepository.GetPizzaByName(pizzaDto.Name);
+        var pizza = _unitOfWork.PizzaRepository.GetPizzaById(pizzaDto.Id);
         pizza.Cost = pizzaDto.Cost;
         pizza.Ingredients = pizzaDto.Ingredients;
         pizza.Weight = pizzaDto.Weight;
+        pizza.Name = pizzaDto.Name;
 
         await _unitOfWork.PizzaRepository.UpdatePizza(pizza);
         await _unitOfWork.Complete();

@@ -1,6 +1,7 @@
 ﻿using Domain.DTOs;
 using Domain.Entities;
 using Domain.Interfaces.IServices;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,15 +12,17 @@ public class AccountService : IAccountService
     private readonly UserManager<User> _userManager;
     private readonly SignInManager<User> _signInManager;
     private readonly ITokenService _tokenService;
+    private readonly DataContext _context;
 
     public AccountService(UserManager<User> userManager, SignInManager<User> signInManager,
-        ITokenService tokenService)
+        ITokenService tokenService, DataContext context)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _tokenService = tokenService;
+        _context = context;
     }
-    
+
     public async Task<UserDto> Register(RegisterDto registerDto)
     {
         if (await UserExists(registerDto.Email)) throw new UnauthorizedAccessException("Email is already in use");
@@ -70,8 +73,12 @@ public class AccountService : IAccountService
             Token = await _tokenService.CreateToken(user),
         };
     }
+
     private async Task<bool> UserExists(string username)
     {
-        return await _userManager.Users.AnyAsync(x => x.Email.Equals(username.ToLower()));
+        var user = _context.Users.FromSqlInterpolated(
+            $"""select * from "AspNetUsers" where "Email" = { username.ToLower()}  """ );
+
+        return user.Any();
     }
 }

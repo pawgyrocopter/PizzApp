@@ -26,10 +26,21 @@ public class Seed
         //     await userManager.AddToRoleAsync(user, "Customer");
         // }
 
-        var admin = new User()
+        var admin = new User
         {
             Id = 11,
-            UserName = "admin"
+            UserName = "admin",
+            NormalizedUserName = "ADMIN",
+            Email = "admin",
+            NormalizedEmail = "admin",
+            EmailConfirmed = false,
+            PhoneNumber = "admin",
+            PhoneNumberConfirmed = true,
+            TwoFactorEnabled = false,
+            LockoutEnd = null,
+            LockoutEnabled = false,
+            AccessFailedCount = 0,
+            Adress = "admin"
         };
         
         await userManager.CreateAsync(admin, "123123");

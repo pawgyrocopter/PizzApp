@@ -14,5 +14,7 @@ public interface IPizzaRepository
 
     Task<Pizza> GetPizzaByName(string pizzaName);
 
+    Pizza GetPizzaById(int id);
+
     Task<PizzaOrder> GetPizzaOrderById(int pizzaOrderId);
 }

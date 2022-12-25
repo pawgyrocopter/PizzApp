@@ -26,12 +26,13 @@ public static class ApplicationServiceExtensions
         services.AddScoped<ITopingService, TopingService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IAccountService, AccountService>();
+        services.AddScoped<IAdminService, AdminService>();
         services.AddSignalR();
         // services.AddSingleton<StateCheckerService>();
-        var connectionString = configuration.GetConnectionString("DefaultConnection");
+        var connectionString = configuration.GetConnectionString("PostgreConnection");
         services.AddDbContext<DataContext>(options =>
         {
-            options.UseSqlite(connectionString);
+            options.UseNpgsql(connectionString);
         });
         return services;
     }

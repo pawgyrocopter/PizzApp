@@ -6,7 +6,7 @@
 
           <h2 class="text-center mb-4">Edit pizza</h2>
 
-          <div class="card"  style="border-radius: 15px;">
+          <div class="card" style="border-radius: 15px;">
             <div class="card-body">
 
               <div class="row align-items-center pt-4 pb-3">
@@ -14,11 +14,11 @@
                   <h6 class="mb-0">Pizza Name</h6>
                 </div>
                 <div class="col-md-9 pe-5">
-                  <span type="text"
-                         class="form-control form-control-lg"
-                         name="name"
-
-                  >{{pizza?.name}}</span>
+                  <textarea type="text"
+                            class="form-control form-control-lg"
+                            name="name"
+                            formControlName="name"
+                            [value]="pizza?.name"></textarea>
                 </div>
               </div>
 
@@ -32,9 +32,9 @@
                 </div>
                 <div class="col-md-9 pe-5">
                   <textarea type="text"
-                         class="form-control form-control-lg"
-                         name="cost"
-                         formControlName="cost"
+                            class="form-control form-control-lg"
+                            name="cost"
+                            formControlName="cost"
                             [value]="pizza?.cost"></textarea>
                 </div>
               </div>
@@ -47,9 +47,9 @@
                 <div class="col-md-9 pe-5">
 
                   <textarea type="text"
-                         class="form-control form-control-lg"
-                         name="weight"
-                         formControlName="weight"
+                            class="form-control form-control-lg"
+                            name="weight"
+                            formControlName="weight"
                             [value]="pizza?.weight"></textarea>
 
                 </div>

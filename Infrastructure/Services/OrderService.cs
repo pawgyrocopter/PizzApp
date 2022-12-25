@@ -58,8 +58,10 @@ public class OrderService : IOrderService
 
     public async Task<IEnumerable<OrderDto>> GetOrdersAsync()
     {
-        return (await _unitOfWork.OrderRepository.GetOrders())
-            .ProjectTo<OrderDto>(_mapper.ConfigurationProvider);
+        var orders = (await _unitOfWork.OrderRepository.GetOrders());
+        var mapped = _mapper.Map<List<OrderDto>>(orders);
+        return mapped;
+
     }
 
     public async Task<IEnumerable<OrderDto>> GetUserOrdersAsync(string name)

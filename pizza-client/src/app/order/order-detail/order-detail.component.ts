@@ -49,6 +49,13 @@ export class OrderDetailComponent implements OnInit {
         el.stateAsString = State[el.state];
       })
       this.order.orderStateAsString = OrderState[this.order.orderState];
+      this.order.pizzas.forEach(el => {
+        let a = 0;
+        el.topings.forEach(el2 => {
+          a = a + el2.counter * 20
+        })
+        el.maxCost = a + el.cost;
+      })
     })
 
   }

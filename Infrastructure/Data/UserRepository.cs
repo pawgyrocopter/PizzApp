@@ -18,7 +18,7 @@ public class UserRepository : IUserRepository
     
     public async Task<IQueryable<User>> GetUsers()
     {
-        return _context.Users;
+        return _context.Users.FromSqlInterpolated($"""select * from "AspNetUsers" """);
     }
 
     public async Task<User> GetUserByName(string name)

@@ -11,6 +11,7 @@ export interface Pizza {
   state : State
   stateAsString : string
   topings : Toping[]
+  maxCost : number
 }
 
 export enum State{

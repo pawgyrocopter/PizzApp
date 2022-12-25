@@ -48,8 +48,6 @@ public class DataContext : IdentityDbContext<
             .HasMany(p => p.Topings)
             .WithOne(t => t.PizzaOrder)
             .HasForeignKey( t => t.PizzaOrderId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-
+            .OnDelete(deleteBehavior: DeleteBehavior.Cascade);
     }
 }
